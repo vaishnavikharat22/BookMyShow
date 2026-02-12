@@ -16,56 +16,56 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
-    public MovieDto createMovie(MovieDto movieDto){
+    public MovieDto createMovie(MovieDto movieDto) {
         Movie movie = mapToEntity(movieDto);
         Movie saveMovie = movieRepository.save(movie);
         return mapToDto(saveMovie);
     }
 
-    public MovieDto getMovieById(Long id){
+    public MovieDto getMovieById(Long id) {
 
         Movie movie = movieRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Movie not found with id : " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found with id : " + id));
         return mapToDto(movie);
     }
 
-    public List<MovieDto> getAllMovies(){
+    public List<MovieDto> getAllMovies() {
         List<Movie> movies = movieRepository.findAll();
         return movies.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<MovieDto> getMovieByGenre(String genre){
+    public List<MovieDto> getMovieByGenre(String genre) {
         List<Movie> movies = movieRepository.findByGenre(genre);
         return movies.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<MovieDto> getMovieByLanguage(String language){
+    public List<MovieDto> getMovieByLanguage(String language) {
         List<Movie> movies = movieRepository.findByLanguage(language);
         return movies.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public List<MovieDto> searchMovies(String title){
-        List<Movie> movies = movieRepository.findByLanguage(title);
+    public List<MovieDto> searchMovies(String title) {
+        List<Movie> movies = movieRepository.findByTitleContaining(title);
         return movies.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public MovieDto updateMovie(Long id,MovieDto movieDto) {
+    public MovieDto updateMovie(Long id, MovieDto movieDto) {
 
         Movie movie = movieRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(("Movie not found with id : "+id)));
+                .orElseThrow(() -> new ResourceNotFoundException(("Movie not found with id : " + id)));
 
         movie.setTitle(movieDto.getTitle());
         movie.setDescription(movieDto.getDescription());
         movie.setLanguage(movieDto.getLanguage());
-        movie.setGenre(movieDto.getLanguage());
+        movie.setGenre(movieDto.getGenre());
         movie.setDurationMins(movieDto.getDurationMins());
         movie.setReleaseDate(movieDto.getReleaseDate());
         movie.setPosterUrl(movieDto.getPosterUrl());
@@ -74,15 +74,14 @@ public class MovieService {
         return mapToDto(updatedMovie);
     }
 
-    public void deleteMovie(Long id){
+    public void deleteMovie(Long id) {
 
         Movie movie = movieRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException(("Movie not found with id : "+id)));
+                .orElseThrow(() -> new ResourceNotFoundException(("Movie not found with id : " + id)));
         movieRepository.delete(movie);
     }
 
-    private MovieDto mapToDto(Movie movie)
-    {
+    private MovieDto mapToDto(Movie movie) {
         MovieDto movieDto = new MovieDto();
         movieDto.setId(movie.getId());
         movieDto.setTitle(movie.getTitle());
@@ -95,13 +94,12 @@ public class MovieService {
         return movieDto;
     }
 
-    public Movie mapToEntity(MovieDto movieDto)
-    {
+    public Movie mapToEntity(MovieDto movieDto) {
         Movie movie = new Movie();
         movie.setTitle(movieDto.getTitle());
         movie.setDescription(movieDto.getDescription());
         movie.setLanguage(movieDto.getLanguage());
-        movie.setGenre(movieDto.getLanguage());
+        movie.setGenre(movieDto.getGenre());
         movie.setDurationMins(movieDto.getDurationMins());
         movie.setReleaseDate(movieDto.getReleaseDate());
         movie.setPosterUrl(movieDto.getPosterUrl());

@@ -32,14 +32,14 @@ public class ShowService {
     @Autowired
     private ShowSeatRepository showSeatRepository;
 
-    public ShowDto createShow(ShowDto showDto){
+    public ShowDto createShow(ShowDto showDto) {
 
         Show show = new Show();
         Movie movie = movieRepository.findById(showDto.getMovie().getId())
-                .orElseThrow(()->new ResourceNotFoundException("Movie Not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Movie Not Found"));
 
-        Screen screen = ScreenRepository.findById(showDto.getScreen().getId())
-                .orElseThrow(()->new ResourceNotFoundException("Screen Not Found"));
+        Screen screen = screenRepository.findById(showDto.getScreen().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Screen Not Found"));
 
         show.setMovie(movie);
         show.setScreen(screen);
@@ -49,74 +49,68 @@ public class ShowService {
         Show savedShow = showRepository.save(show);
 
         List<ShowSeat> availableSeats = showSeatRepository
-                .findByShowIdAndStatus(savedShow.getId(),"AVAILABLE");
-        return mapToDto(savedShow,availableSeats);
+                .findByShowIdAndStatus(savedShow.getId(), "AVAILABLE");
+        return mapToDto(savedShow, availableSeats);
     }
 
-    public ShowDto getShowById(Long id){
+    public ShowDto getShowById(Long id) {
 
         Show show = showRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Show not found with id: "+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Show not found with id: " + id));
         List<ShowSeat> availableSeats = showSeatRepository
-                .findByShowIdAndStatus(show.getId(),"AVAILABLE");
-        return mapToDto(show,availableSeats);
+                .findByShowIdAndStatus(show.getId(), "AVAILABLE");
+        return mapToDto(show, availableSeats);
     }
 
-    public List<ShowDto> getAllShows(){
+    public List<ShowDto> getAllShows() {
 
         List<Show> shows = showRepository.findAll();
         return shows.stream()
                 .map(show -> {
-                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(),"AVAILABLE");
-                    return mapToDto(show,availableSeats);
+                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(), "AVAILABLE");
+                    return mapToDto(show, availableSeats);
 
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<ShowDto> getShowsByMovie(Long movieId)
-    {
+    public List<ShowDto> getShowsByMovie(Long movieId) {
 
         List<Show> shows = showRepository.findByMovieId(movieId);
         return shows.stream()
                 .map(show -> {
-                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(),"AVAILABLE");
-                    return mapToDto(show,availableSeats);
+                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(), "AVAILABLE");
+                    return mapToDto(show, availableSeats);
 
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<ShowDto> getShowsByMovieAndCity(Long movieId, String city)
-    {
+    public List<ShowDto> getShowsByMovieAndCity(Long movieId, String city) {
 
-        List<Show> shows = showRepository.findMovie_IdAndScreen_Theater_City(movieId,city);
+        List<Show> shows = showRepository.findByMovie_IdAndScreen_Theater_City(movieId, city);
         return shows.stream()
                 .map(show -> {
-                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(),"AVAILABLE");
-                    return mapToDto(show,availableSeats);
+                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(), "AVAILABLE");
+                    return mapToDto(show, availableSeats);
 
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<ShowDto> getShowsByDateRange(LocalDateTime startDate, LocalDateTime endDate)
-    {
+    public List<ShowDto> getShowsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
 
         List<Show> shows = showRepository.findByStartTimeBetween(startDate, endDate);
         return shows.stream()
                 .map(show -> {
-                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(),"AVAILABLE");
-                    return mapToDto(show,availableSeats);
+                    List<ShowSeat> availableSeats = showSeatRepository.findByShowIdAndStatus(show.getId(), "AVAILABLE");
+                    return mapToDto(show, availableSeats);
 
                 })
                 .collect(Collectors.toList());
     }
 
-
-
-
-    private ShowDto mapToDto(Show show, List<ShowSeat> availableSeats){
+    private ShowDto mapToDto(Show show, List<ShowSeat> availableSeats) {
 
         ShowDto showDto = new ShowDto();
         showDto.setId(show.getId());
@@ -131,16 +125,14 @@ public class ShowService {
                 show.getMovie().getGenre(),
                 show.getMovie().getDurationMins(),
                 show.getMovie().getReleaseDate(),
-                show.getMovie().getPosterUrl()
-        ));
+                show.getMovie().getPosterUrl()));
 
         TheaterDto theaterDto = new TheaterDto(
                 show.getScreen().getTheater().getId(),
                 show.getScreen().getTheater().getName(),
                 show.getScreen().getTheater().getAddress(),
                 show.getScreen().getTheater().getCity(),
-                show.getScreen().getTheater().getTotalScreen()
-        );
+                show.getScreen().getTheater().getTotalScreen());
 
         showDto.setScreen(new ScreenDto(
                 show.getScreen().getId(),
@@ -151,7 +143,7 @@ public class ShowService {
         ));
 
         List<ShowSeatDto> seatDtos = availableSeats.stream()
-                .map(seat->{
+                .map(seat -> {
                     ShowSeatDto seatDto = new ShowSeatDto();
                     seatDto.setId(seat.getId());
                     seatDto.setStatus(seat.getStatus());

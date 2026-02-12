@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @Entity
-@Table(name = "show_seats")
+@Table(name = "theaters")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,4 +27,5 @@ public class Theater {
 
     @OneToMany(mappedBy = "theater", cascade = CascadeType.ALL)
     private List<Screen> screens;
+
 }

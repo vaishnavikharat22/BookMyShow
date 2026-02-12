@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "show_seats")
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
