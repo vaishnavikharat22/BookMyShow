@@ -1,6 +1,6 @@
 # BookMyShow - Movie Ticket Booking System
 
-A Spring Boot REST API application for booking movie tickets. This system allows users to view movies, shows, theaters, select seats, and make bookings and payments.
+A Spring Boot REST API application for booking movie tickets. This system allows users to view movies, shows, theaters, select seats, and make bookings and payments
 
 ## Project Overview
 
